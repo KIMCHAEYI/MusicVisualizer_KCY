@@ -11,6 +11,7 @@ function preload() {
 function setup() {
   createCanvas(800, 600);
   angleMode(DEGREES);
+  rectMode(CENTER);
   textAlign(CENTER, CENTER);
 
   amp = new p5.Amplitude();
@@ -24,8 +25,8 @@ function draw() {
   const spectrum = fft.analyze();
 
   drawBackground();
-  drawCircularSpectrum(spectrum);
-  drawCenterCircle();
+  drawCircularSpectrumBehindTree(spectrum);
+  drawChristmasTree();
 
   fill(255);
   noStroke();
@@ -45,9 +46,9 @@ function drawBackground() {
   }
 }
 
-function drawCircularSpectrum(spectrum) {
+function drawCircularSpectrumBehindTree(spectrum) {
   push();
-  translate(width / 2, height / 2);
+  translate(width / 2, height * 0.35);
 
   const barCount = 96;
   const innerRadius = 130;
@@ -78,14 +79,36 @@ function drawCircularSpectrum(spectrum) {
   pop();
 }
 
-function drawCenterCircle() {
-  const baseRadius = 90;
-  const r = baseRadius + smoothLevel * 120;
+function drawChristmasTree() {
+  const centerX    = width * 0.5;
+  const baseY      = height * 0.735;
+  const treeHeight = 370;
+  const treeWidth  = 410;
 
-  noFill();
-  stroke(255);
-  strokeWeight(3);
-  ellipse(width / 2, height / 2, r, r);
+  fill(90, 60, 40);
+  rect(centerX, baseY + 65, 50, 85, 10);
+
+  const layers = 3;
+  for (let i = 0; i < layers; i++) {
+    const t = i / (layers - 1);
+    const h = treeHeight * 0.45;
+    const w = lerp(treeWidth * 0.5, treeWidth, t);
+
+    const yTop = baseY - treeHeight * 0.7 + i * 85;
+    const yBottom = yTop + h;
+
+    noStroke();
+    fill(10, 90 + i * 20, 40 + i * 10);
+    triangle(
+      centerX, yTop,
+      centerX - w / 2, yBottom,
+      centerX + w / 2, yBottom
+    );
+  }
+
+  noStroke();
+  fill(245);
+  rect(centerX, height - 10, width + 40, 80);
 }
 
 function mousePressed() {
